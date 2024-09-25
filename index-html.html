@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>משחק חללית</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000033;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #gameCanvas {
+            border: 1px solid #4444ff;
+        }
+        #scoreDisplay, #livesDisplay {
+            position: absolute;
+            top: 20px;
+            font-size: 24px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        #scoreDisplay {
+            right: 20px;
+        }
+        #livesDisplay {
+            left: 20px;
+        }
+        #countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        #restartButton {
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            font-size: 18px;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #4444ff;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #restartButton:hover {
+            background-color: #5555ff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="scoreDisplay">ניקוד: 0</div>
+    <div id="livesDisplay">חיים: 10</div>
+    <div id="countdown"></div>
+    <button id="restartButton">התחל מחדש</button>
+    <script src="game1.js"></script>
+    <script src="game2.js"></script>
+    <script src="game3.js"></script>
+</body>
+</html>
