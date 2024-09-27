@@ -368,30 +368,78 @@ function moveBullets() {
 }
 
 function drawAstronauts() {
-    ctx.fillStyle = 'white';
     astronauts.forEach(astronaut => {
-        // גוף
-        ctx.fillRect(astronaut.x, astronaut.y + astronaut.height / 4, astronaut.width, astronaut.height / 2);
+        ctx.save();
+        ctx.translate(astronaut.x, astronaut.y);
         
-        // ראש
+        // Body
+        let gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, astronaut.width);
+        gradient.addColorStop(0, '#ffffff');
+        gradient.addColorStop(0.7, '#cccccc');
+        gradient.addColorStop(1, '#999999');
+        ctx.fillStyle = gradient;
         ctx.beginPath();
-        ctx.arc(astronaut.x + astronaut.width / 2, astronaut.y + astronaut.height / 4, astronaut.width / 3, 0, Math.PI * 2);
+        ctx.ellipse(0, 0, astronaut.width / 2, astronaut.height / 2, 0, 0, Math.PI * 2);
         ctx.fill();
-        
-        // רגליים
-        ctx.fillRect(astronaut.x + astronaut.width / 4, astronaut.y + astronaut.height * 3/4, astronaut.width / 5, astronaut.height / 4);
-        ctx.fillRect(astronaut.x + astronaut.width * 3/5, astronaut.y + astronaut.height * 3/4, astronaut.width / 5, astronaut.height / 4);
-        
-        // ידיים
-        ctx.fillRect(astronaut.x - astronaut.width / 6, astronaut.y + astronaut.height / 3, astronaut.width / 5, astronaut.height / 3);
-        ctx.fillRect(astronaut.x + astronaut.width, astronaut.y + astronaut.height / 3, astronaut.width / 5, astronaut.height / 3);
-        
-        // קסדה
-        ctx.strokeStyle = 'gray';
+
+        // Helmet
+        gradient = ctx.createRadialGradient(0, -astronaut.height/4, 0, 0, -astronaut.height/4, astronaut.width/2);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+        gradient.addColorStop(0.7, 'rgba(200, 200, 255, 0.8)');
+        gradient.addColorStop(1, 'rgba(150, 150, 255, 0.6)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(0, -astronaut.height/4, astronaut.width/2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Visor
+        gradient = ctx.createLinearGradient(-astronaut.width/3, -astronaut.height/3, astronaut.width/3, -astronaut.height/5);
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 0.1)');
+        gradient.addColorStop(0.5, 'rgba(200, 200, 255, 0.5)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0.1)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.ellipse(0, -astronaut.height/4, astronaut.width/3, astronaut.height/6, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Arms
+        ctx.fillStyle = '#cccccc';
+        ctx.beginPath();
+        ctx.ellipse(-astronaut.width*0.6, 0, astronaut.width/6, astronaut.height/3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(astronaut.width*0.6, 0, astronaut.width/6, astronaut.height/3, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Legs
+        ctx.beginPath();
+        ctx.ellipse(-astronaut.width/4, astronaut.height*0.4, astronaut.width/6, astronaut.height/3, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(astronaut.width/4, astronaut.height*0.4, astronaut.width/6, astronaut.height/3, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Backpack
+        gradient = ctx.createLinearGradient(-astronaut.width/2, -astronaut.height/2, astronaut.width/2, astronaut.height/2);
+        gradient.addColorStop(0, '#ffffff');
+        gradient.addColorStop(1, '#aaaaaa');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, astronaut.width/3, astronaut.height/2, 0, 0, Math.PI);
+        ctx.fill();
+
+        // Details
+        ctx.strokeStyle = '#666666';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(astronaut.x + astronaut.width / 2, astronaut.y + astronaut.height / 4, astronaut.width / 2.5, 0, Math.PI * 2);
+        ctx.arc(0, -astronaut.height/4, astronaut.width/2, 0, Math.PI * 2);
         ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(-astronaut.width/2, 0);
+        ctx.lineTo(astronaut.width/2, 0);
+        ctx.stroke();
+        
+        ctx.restore();
     });
 }
 
