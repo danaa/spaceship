@@ -49,7 +49,7 @@ function checkCollisions() {
 
     if (currentLevel >= 2) {
         satellites.forEach((satellite, satelliteIndex) => {
-            if (checkCollisionRect(spaceship, satellite)) {
+            if (checkCollisionSatellite(spaceship, satellite)) {
                 lives--;
                 livesDisplay.textContent = 'חיים: ' + lives;
                 resetSatellite(satellite);
@@ -60,7 +60,7 @@ function checkCollisions() {
             }
 
             bullets.forEach((bullet, bulletIndex) => {
-                if (checkCollisionRectCircle(satellite, bullet)) {
+                if (checkCollisionSatellite(bullet, satellite)) {
                     createExplosion(satellite.x + satellite.width / 2, satellite.y + satellite.height / 2);
                     resetSatellite(satellite);
                     bullets.splice(bulletIndex, 1);
@@ -115,6 +115,59 @@ function checkCollisionRectCircle(rect, circle) {
     let distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
     return distanceSquared < (circle.radius * circle.radius);
 }
+
+function checkCollisionSatellite(object, satellite) {
+    const wingWidth = satellite.width / 2;
+    const wingHeight = satellite.height / 4;
+
+    // Define the left wing rectangle
+    const leftWing = {
+        x: satellite.x - wingWidth,
+        y: satellite.y + satellite.height / 2 - wingHeight / 2,
+        width: wingWidth,
+        height: wingHeight
+    };
+
+    // Define the right wing rectangle
+    const rightWing = {
+        x: satellite.x + satellite.width,
+        y: satellite.y + satellite.height / 2 - wingHeight / 2,
+        width: wingWidth,
+        height: wingHeight
+    };
+
+    if (object.radius) {
+        // Object is a circle (bullet)
+        // Check collision with main body
+        if (checkCollisionRectCircle(satellite, object)) {
+            return true;
+        }
+        // Check collision with left wing
+        if (checkCollisionRectCircle(leftWing, object)) {
+            return true;
+        }
+        // Check collision with right wing
+        if (checkCollisionRectCircle(rightWing, object)) {
+            return true;
+        }
+    } else {
+        // Object is a rectangle (spaceship)
+        // Check collision with main body
+        if (checkCollisionRect(satellite, object)) {
+            return true;
+        }
+        // Check collision with left wing
+        if (checkCollisionRect(leftWing, object)) {
+            return true;
+        }
+        // Check collision with right wing
+        if (checkCollisionRect(rightWing, object)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 function createExplosion(x, y) {
     explosions.push({
