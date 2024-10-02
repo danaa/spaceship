@@ -89,3 +89,22 @@ function moveAstronauts() {
         }
     });
 }
+
+function moveEnemySpaceships() {
+    enemySpaceships.forEach(enemy => {
+        enemy.y += enemy.speed;
+        if (enemy.y > canvas.height) {
+            resetEnemySpaceship(enemy);
+        }
+    });
+}
+
+// Add this function to move enemy bullets
+function moveEnemyBullets() {
+    enemyBullets.forEach((bullet, index) => {
+        bullet.y += bullet.speed;
+        if (bullet.y > canvas.height) {
+            enemyBullets.splice(index, 1);
+        }
+    });
+}

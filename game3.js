@@ -98,6 +98,46 @@ function checkCollisions() {
             });
         });
     }
+
+    if (currentLevel >= 4) {
+        enemySpaceships.forEach((enemy, enemyIndex) => {
+            if (checkCollisionRect(spaceship, enemy)) {
+                lives--;
+                livesDisplay.textContent = 'חיים: ' + lives;
+                resetEnemySpaceship(enemy);
+                createExplosion(spaceship.x + spaceship.width / 2, spaceship.y + spaceship.height / 2);
+                if (lives <= 0) {
+                    gameOver();
+                }
+            }
+
+            bullets.forEach((bullet, bulletIndex) => {
+                if (checkCollisionRectCircle(enemy, bullet)) {
+                    createExplosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
+                    resetEnemySpaceship(enemy);
+                    bullets.splice(bulletIndex, 1);
+                    score += 20;
+                    scoreDisplay.textContent = 'ניקוד: ' + score;
+                    checkLevelUp();
+                }
+            });
+        });
+    }
+
+    // Check collisions with enemy bullets
+    if (currentLevel >= 5) {
+        enemyBullets.forEach((bullet, bulletIndex) => {
+            if (checkCollisionRectCircle(spaceship, bullet)) {
+                lives--;
+                livesDisplay.textContent = 'חיים: ' + lives;
+                enemyBullets.splice(bulletIndex, 1);
+                createExplosion(spaceship.x + spaceship.width / 2, spaceship.y + spaceship.height / 2);
+                if (lives <= 0) {
+                    gameOver();
+                }
+            }
+        });
+    }
 }
 
 function checkCollisionRect(rect1, rect2) {
@@ -181,7 +221,7 @@ function createExplosion(x, y) {
 }
 
 function checkLevelUp() {
-    const newLevel = Math.min(3, Math.floor(score / 20) + 1);
+    const newLevel = Math.min(5, Math.floor(score / 20) + 1);
     if (newLevel > currentLevel) {
         currentLevel = newLevel;
         showLevelUpMessage();
@@ -189,6 +229,8 @@ function checkLevelUp() {
             createSatellites();
         } else if (currentLevel === 3) {
             createAstronauts();
+        } else if (currentLevel === 4) {
+            createEnemySpaceships();
         }
     }
 }
@@ -227,6 +269,11 @@ function resetSatellite(satellite) {
 function resetAstronaut(astronaut) {
     astronaut.x = Math.random() * (canvas.width - astronaut.width);
     astronaut.y = -astronaut.height;
+}
+
+function resetEnemySpaceship(enemy) {
+    enemy.x = Math.random() * (canvas.width - enemy.width);
+    enemy.y = -enemy.height;
 }
 
 function createMeteorsAndCoins() {
@@ -278,6 +325,18 @@ function createAstronauts() {
     }
 }
 
+function createEnemySpaceships() {
+    for (let i = 0; i < 3; i++) {
+        enemySpaceships.push({
+            x: Math.random() * (canvas.width - 40),
+            y: Math.random() * canvas.height - canvas.height,
+            width: 40,
+            height: 60,
+            speed: 1 + Math.random()
+        });
+    }
+}
+
 function createStars() {
     stars = [];
     for (let i = 0; i < 100; i++) {
@@ -304,6 +363,8 @@ function resetGame() {
     livesDisplay.textContent = 'חיים: 10';
     gameStarted = false;
     countdown = 3;
+    enemySpaceships = [];
+    enemyBullets = [];
     startCountdown();
 }
 
@@ -332,6 +393,8 @@ function gameLoop() {
     drawLives();
     if (currentLevel >= 2) drawSatellites();
     if (currentLevel >= 3) drawAstronauts();
+    if (currentLevel >= 4) drawEnemySpaceships();
+    if (currentLevel >= 5) drawEnemyBullets();
     drawExplosions();
     drawBullets();
     moveMeteors();
@@ -339,6 +402,11 @@ function gameLoop() {
     moveBullets();
     if (currentLevel >= 2) moveSatellites();
     if (currentLevel >= 3) moveAstronauts();
+    if (currentLevel >= 4) moveEnemySpaceships();
+    if (currentLevel >= 5) {
+        moveEnemyBullets();
+        enemyShoot();
+    }
     checkCollisions();
 
     if (levelUpMessage) {
@@ -529,3 +597,36 @@ window.addEventListener('resize', () => {
 
 restartButton.addEventListener('click', resetGame);
 initGame();
+
+function enemyShoot() {
+    if (currentLevel >= 5) {
+        enemySpaceships.forEach(enemy => {
+            if (Math.random() < 0.02) { // 2% chance to shoot each frame
+                enemyBullets.push({
+                    x: enemy.x + enemy.width / 2,
+                    y: enemy.y + enemy.height,
+                    radius: 3,
+                    speed: 5
+                });
+            }
+        });
+    }
+}
+
+function drawEnemyBullets() {
+    ctx.fillStyle = '#FF0000';
+    enemyBullets.forEach(bullet => {
+        ctx.beginPath();
+        ctx.arc(bullet.x, bullet.y, bullet.radius, 0, Math.PI * 2);
+        ctx.fill();
+    });
+}
+
+function moveEnemyBullets() {
+    enemyBullets.forEach((bullet, index) => {
+        bullet.y += bullet.speed;
+        if (bullet.y > canvas.height) {
+            enemyBullets.splice(index, 1);
+        }
+    });
+}

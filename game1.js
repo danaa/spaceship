@@ -28,6 +28,10 @@ let gameStarted = false;
 let countdown = 3;
 let currentLevel = 1;
 
+let enemySpaceships = [];
+
+let enemyBullets = [];
+
 function drawSpaceship() {
     ctx.save();
     ctx.translate(spaceship.x + spaceship.width / 2, spaceship.y + spaceship.height / 2);
@@ -214,5 +218,88 @@ function drawExplosions() {
         if (explosion.life <= 0) {
             explosions.splice(index, 1);
         }
+    });
+}
+
+function drawEnemySpaceships() {
+    enemySpaceships.forEach(enemy => {
+        ctx.save();
+        ctx.translate(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
+        ctx.rotate(Math.PI); // Rotate 180 degrees to face downwards
+        
+        // Enemy spaceship body
+        let gradient = ctx.createLinearGradient(-enemy.width/2, 0, enemy.width/2, 0);
+        gradient.addColorStop(0, '#8B0000');  // Dark red
+        gradient.addColorStop(0.5, '#FF0000');  // Bright red
+        gradient.addColorStop(1, '#8B0000');  // Dark red
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.moveTo(0, -enemy.height / 2);
+        ctx.lineTo(enemy.width / 2, enemy.height / 2);
+        ctx.lineTo(-enemy.width / 2, enemy.height / 2);
+        ctx.closePath();
+        ctx.fill();
+
+        // 3D effect for the body
+        ctx.strokeStyle = '#600000';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Enemy spaceship window
+        gradient = ctx.createRadialGradient(0, -enemy.height / 4, 0, 0, -enemy.height / 4, enemy.width / 4);
+        gradient.addColorStop(0, '#FFFF00');  // Bright yellow
+        gradient.addColorStop(0.7, '#FFA500');  // Orange
+        gradient.addColorStop(1, '#FF4500');  // Red-orange
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(0, -enemy.height / 4, enemy.width / 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Wings
+        gradient = ctx.createLinearGradient(-enemy.width, 0, 0, 0);
+        gradient.addColorStop(0, '#8B0000');  // Dark red
+        gradient.addColorStop(1, '#FF0000');  // Bright red
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.moveTo(-enemy.width / 2, enemy.height / 4);
+        ctx.lineTo(-enemy.width, enemy.height / 2);
+        ctx.lineTo(-enemy.width / 2, enemy.height / 2);
+        ctx.closePath();
+        ctx.fill();
+
+        gradient = ctx.createLinearGradient(0, 0, enemy.width, 0);
+        gradient.addColorStop(0, '#FF0000');  // Bright red
+        gradient.addColorStop(1, '#8B0000');  // Dark red
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.moveTo(enemy.width / 2, enemy.height / 4);
+        ctx.lineTo(enemy.width, enemy.height / 2);
+        ctx.lineTo(enemy.width / 2, enemy.height / 2);
+        ctx.closePath();
+        ctx.fill();
+
+        // Engine fire
+        gradient = ctx.createLinearGradient(0, enemy.height / 2, 0, enemy.height);
+        gradient.addColorStop(0, '#FF4500');  // Red-orange
+        gradient.addColorStop(0.5, '#FFA500');  // Orange
+        gradient.addColorStop(1, 'rgba(255, 165, 0, 0)');  // Transparent orange
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.moveTo(-enemy.width / 4, enemy.height / 2);
+        ctx.lineTo(0, enemy.height / 2 + Math.random() * 20 + 15);
+        ctx.lineTo(enemy.width / 4, enemy.height / 2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.restore();
+    });
+}
+
+function drawEnemyBullets() {
+    ctx.fillStyle = '#FF0000';
+    enemyBullets.forEach(bullet => {
+        ctx.beginPath();
+        ctx.arc(bullet.x, bullet.y, bullet.radius, 0, Math.PI * 2);
+        ctx.fill();
     });
 }
