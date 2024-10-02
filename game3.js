@@ -1,6 +1,8 @@
 let bullets = [];
 let levelUpMessage = '';
 let levelUpMessageTimeout;
+let isMobile = false;
+let touchStartX = 0;
 
 function checkCollisions() {
     meteors.forEach((meteor, meteorIndex) => {
@@ -446,11 +448,52 @@ function drawAstronauts() {
 function initGame() {
     createMeteorsAndCoins();
     createStars();
+    checkMobile();
     startCountdown();
 }
 
-document.addEventListener('keydown', (e) => {
+function checkMobile() {
+    isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('touchend', handleTouchEnd);
+    }
+}
+
+function handleTouchStart(e) {
+    e.preventDefault();
+    touchStartX = e.touches[0].clientX;
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
     if (gameStarted) {
+        const touchX = e.touches[0].clientX;
+        const diffX = touchX - touchStartX;
+        spaceship.x += diffX;
+        spaceship.x = Math.max(0, Math.min(canvas.width - spaceship.width, spaceship.x));
+        touchStartX = touchX;
+    }
+}
+
+function handleTouchEnd(e) {
+    e.preventDefault();
+    if (gameStarted) {
+        const touch = e.changedTouches[0];
+        const touchX = touch.clientX;
+        const touchY = touch.clientY;
+        
+        // Check if the touch ended on the spaceship
+        if (touchX >= spaceship.x && touchX <= spaceship.x + spaceship.width &&
+            touchY >= spaceship.y && touchY <= spaceship.y + spaceship.height) {
+            shootBullet();
+        }
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (gameStarted && !isMobile) {
         switch (e.key) {
             case 'ArrowLeft':
                 spaceship.x -= spaceship.speed;

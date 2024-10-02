@@ -2,6 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>משחק חללית</title>
     <style>
         body {
@@ -51,6 +52,18 @@
         }
         #restartButton:hover {
             background-color: #5555ff;
+        }
+        
+        /* Add these new styles */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
